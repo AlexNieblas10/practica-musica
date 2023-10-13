@@ -1,5 +1,5 @@
 export function getNota() {
-	let numeroNota = Math.round(Math.random() * 19)
+	let numeroNota = Math.ceil(Math.random() * 19)
 
   return numeroNota
 }
