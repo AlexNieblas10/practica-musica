@@ -1,11 +1,15 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
 import "./index.css"
-import { App } from "./App"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import { AdivinaLaNota } from "./pages/AdivinaLaNota"
+import { Principal } from "./pages/Principal"
+import { AdivinaElAcorde } from "./pages/AdivinaElAcorde"
 
 const router = createBrowserRouter([
-	{ path: "/notas-claveSol", element: <App /> },
+	{ path: "/", element: <Principal /> },
+	{ path: "/adivina-nota", element: <AdivinaLaNota /> },
+	{ path: "/adivina-acorde", element: <AdivinaElAcorde /> },
 ])
 
 ReactDOM.createRoot(document.getElementById("root")).render(

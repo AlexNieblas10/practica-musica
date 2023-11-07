@@ -4,7 +4,7 @@ import { TeclaFlat } from "./TeclaFlat.jsx"
 
 export const Piano = ({ setNotaTeclado }) => {
 	return (
-		<section className="flex justify-center relative">
+		<section className="flex justify-center relative p-5">
 			{teclas.map((tecla) => {
 				if (tecla.color === "blanca") {
 					return (
