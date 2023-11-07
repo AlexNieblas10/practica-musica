@@ -1,4 +1,4 @@
-export const notas = [
+export const notasSol = [
 	{ nota: "D", espacio: false, numero: 32 },
 	{ nota: "C#", numero: 31 },
 	{ nota: "C", numero: 30 },

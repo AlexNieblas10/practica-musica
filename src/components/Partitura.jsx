@@ -3,6 +3,8 @@ import { partituraSol } from "../../utils/partituraSol.js"
 import { partituraFa } from "../../utils/partituraFa.js"
 import { Nota } from "./Nota"
 import { getNota } from "../../utils/getNota.js"
+import claveSol from "../assets/clavesol.webp"
+import claveFa from "../assets/clavefa.webp"
 
 export const Partitura = ({
 	notaPartitura,
@@ -17,7 +19,7 @@ export const Partitura = ({
 }) => {
 	let partituraUsada
 
-	if (partitura === "fa") {
+	if (partitura === "FA") {
 		partituraUsada = { partitura: partituraFa }
 	} else {
 		partituraUsada = { partitura: partituraSol }
@@ -47,7 +49,7 @@ export const Partitura = ({
 			{notaPartitura && (
 				<div className="w-full relative">
 					<ul>
-						{partitura === "sol"
+						{partitura === "SOL"
 							? partituraSol.map((nota) => {
 									let visible = false
 									if (notaPartitura === nota.numero) {
@@ -169,14 +171,15 @@ export const Partitura = ({
 					</ul>
 					<img
 						className={` w-52 absolute ${
-							partitura === "sol" ? "top-9" : "top-[120px]"
+							partitura === "SOL" ? "top-9" : "top-[120px]"
 						}`}
 						src={
-							partitura === "sol"
-								? "https://cdn.pixabay.com/photo/2016/03/26/01/17/treble-clef-1279909_960_720.png"
-								: "https://cdn.pixabay.com/photo/2016/05/30/20/54/bass-clef-1425777_1280.png"
+							partitura === "SOL"
+								? claveSol
+								: claveFa
 						}
 					/>
+
 				</div>
 			)}
 		</>

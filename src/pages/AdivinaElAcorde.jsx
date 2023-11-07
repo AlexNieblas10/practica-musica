@@ -1,13 +1,20 @@
 import { useEffect, useState } from "react"
-import { notas } from "../../utils/NotasSol.js"
+import { notasSol } from "../../utils/NotasSol.js"
 import { Nota } from "../components/Nota.jsx"
-import { Tecla } from "../components/Tecla.jsx"
-import { TeclaFlat } from "../components/TeclaFlat.jsx"
 import { crearAcorde } from "../../utils/crearAcorde.js"
 import { teclas as teclado } from "../../utils/teclas.js"
 import { Modal } from "../components/Modal.jsx"
+import { notasFa } from "../../utils/notasFa.js"
+import claveSol from "../assets/clavesol.webp"
+import claveFa from "../assets/clavefa.webp"
+import { Teclado } from "../components/Teclado.jsx"
+import { SelectClave } from "../components/SelectClave.jsx"
+import HedearGames from "../components/HedearGames.jsx"
 
 export const AdivinaElAcorde = () => {
+	const [partitura, setPartitura] = useState(
+		window.localStorage.getItem("partitura")
+	)
 	const [miAcorde, setMiAcorde] = useState(false)
 	const [teclas, setTeclas] = useState(false)
 	const [aviso, setAviso] = useState(false)
@@ -19,17 +26,30 @@ export const AdivinaElAcorde = () => {
 		setTeclas(teclado)
 	}, [])
 
+	function selectPartitura(partitura) {
+		window.localStorage.setItem("partitura", partitura)
+		setPartitura(partitura)
+	}
+
 	function verificarAcorde() {
 		let teclasPulsadas = teclas.filter((tecla) => tecla.selected === true)
 		let correct = []
 
 		if (teclasPulsadas.length === 3) {
-			let notasAcorde = notas.filter(
-				(nota) =>
-					nota.numero === miAcorde.base ||
-					nota.numero === miAcorde.tercera ||
-					nota.numero === miAcorde.quinta
-			)
+			let notasAcorde =
+				partitura === "SOL"
+					? notasSol.filter(
+							(nota) =>
+								nota.numero === miAcorde.base ||
+								nota.numero === miAcorde.tercera ||
+								nota.numero === miAcorde.quinta
+					  )
+					: notasFa.filter(
+							(nota) =>
+								nota.numero === miAcorde.base ||
+								nota.numero === miAcorde.tercera ||
+								nota.numero === miAcorde.quinta
+					  )
 
 			let teclasPulsadas = teclas.filter((tecla) => tecla.selected === true)
 
@@ -86,7 +106,7 @@ export const AdivinaElAcorde = () => {
 	}
 
 	return (
-		<section className="flex flex-col items-center justify-around h-screen">
+		<main className="flex flex-col items-center justify-around h-screen">
 			{aciertos >= 20 && (
 				<Modal setAciertos={setAciertos} setErrores={setErrores}>
 					Felicidades ganaste
@@ -97,130 +117,200 @@ export const AdivinaElAcorde = () => {
 					Lo siento intentalo de nuevo
 				</Modal>
 			)}
-			<div className="w-full">
-				<ul className="w-full justify-center flex items-center">
-					<li className="text-green-400 text-2xl font-bold w-1/3 text-center">
-						{aciertos}/20
-					</li>
-					<li className="text-red-400 text-2xl font-bold w-1/3 text-center">
-						{errores}/3
-					</li>
-				</ul>
-				{miAcorde &&
-					notas.map((nota) => {
-						let visible = false
-						if (
-							nota.numero === miAcorde.base ||
-							nota.numero === miAcorde.tercera ||
-							nota.numero === miAcorde.quinta
-						) {
-							visible = true
-						}
-						if (nota.espacio === false) {
-							if (nota.numero < 10 || nota.numero > 23) {
-								return (
-									<li
-										className="list-none h-6  grid place-items-center"
-										key={nota.numero}
-										id={nota.numero}
-									>
-										<div className="border-4 h-2 w-10 border-black"></div>
+			{!partitura && <SelectClave setPartituraUsada={selectPartitura} />}
+			{partitura && (
+				<HedearGames
+					errores={errores}
+					setErrores={setErrores}
+					aciertos={aciertos}
+					setAciertos={setAciertos}
+					setPartitura={setPartitura}
+				/>
+			)}
 
-										{
-											<Nota
-												absolute={true}
-												visible={visible}
-												nota={nota.nota}
-												numero={nota.numero}
-											/>
+			{partitura && teclas && (
+				<>
+					<div className="w-full relative">
+						{miAcorde && partitura === "SOL"
+							? notasSol.map((nota) => {
+									let visible = false
+									if (
+										nota.numero === miAcorde.base ||
+										nota.numero === miAcorde.tercera ||
+										nota.numero === miAcorde.quinta
+									) {
+										visible = true
+									}
+									if (nota.espacio === false) {
+										if (nota.numero < 10 || nota.numero > 23) {
+											return (
+												<li
+													className="list-none h-6  grid place-items-center"
+													key={nota.numero}
+													id={nota.numero}
+												>
+													<div className="border-4 h-2 w-10 border-black"></div>
+
+													{
+														<Nota
+															absolute={true}
+															visible={visible}
+															nota={nota.nota}
+															numero={nota.numero}
+														/>
+													}
+												</li>
+											)
 										}
-									</li>
-								)
-							}
-							return (
-								<li
-									className="list-none h-6  grid place-items-center"
-									key={nota.numero}
-									id={nota.numero}
-								>
-									<div className="border-4 h-2 w-full border-black"></div>
-									<Nota
-										visible={visible}
-										nota={nota.nota}
-										numero={nota.numero}
-										absolute={true}
-									/>
-								</li>
-							)
-						}
-						if (nota.espacio === true) {
-							return (
-								<li
-									className="list-none h-6 grid place-items-center"
-									key={nota.numero}
-									id={nota.numero}
-								>
-									<Nota
-										visible={visible}
-										nota={nota.nota}
-										numero={nota.numero}
-									/>
-								</li>
-							)
-						}
+										return (
+											<li
+												className="list-none h-6  grid place-items-center"
+												key={nota.numero}
+												id={nota.numero}
+											>
+												<div className="border-4 h-2 w-full border-black"></div>
+												<Nota
+													visible={visible}
+													nota={nota.nota}
+													numero={nota.numero}
+													absolute={true}
+												/>
+											</li>
+										)
+									}
+									if (nota.espacio === true) {
+										return (
+											<li
+												className="list-none h-6 grid place-items-center"
+												key={nota.numero}
+												id={nota.numero}
+											>
+												<Nota
+													visible={visible}
+													nota={nota.nota}
+													numero={nota.numero}
+												/>
+											</li>
+										)
+									}
 
-						if (nota.espacio === undefined) {
-							return (
-								<div key={nota.numero} className="flex justify-center gap-7">
-									<Nota
-										visible={visible}
-										nota={nota.nota}
-										numero={nota.numero}
-										absolute={true}
-										sustain={true}
-									/>
-								</div>
-							)
-						}
-					})}
-			</div>
+									if (nota.espacio === undefined) {
+										return (
+											<div
+												key={nota.numero}
+												className="flex justify-center gap-7"
+											>
+												<Nota
+													visible={visible}
+													nota={nota.nota}
+													numero={nota.numero}
+													absolute={true}
+													sustain={true}
+												/>
+											</div>
+										)
+									}
+							  })
+							: notasFa.map((nota) => {
+									let visible = false
+									if (
+										nota.numero === miAcorde.base ||
+										nota.numero === miAcorde.tercera ||
+										nota.numero === miAcorde.quinta
+									) {
+										visible = true
+									}
+									if (nota.espacio === false) {
+										if (nota.numero < 8 || nota.numero > 23) {
+											return (
+												<li
+													className="list-none h-6  grid place-items-center"
+													key={nota.numero}
+													id={nota.numero}
+												>
+													<div className="border-4 h-2 w-10 border-black"></div>
 
-			<div className="flex w-full justify-center">
-				{teclas &&
-					teclas?.map((tecla) => {
-						if (tecla.color === "blanca") {
-							return (
-								<Tecla
-									key={tecla.nota}
-									numero={tecla.numero}
-									setSelected={setTeclas}
-									teclado={teclas}
-									selected={tecla.selected}
-								/>
-							)
-						}
-						if (tecla.color === "negra") {
-							return (
-								<TeclaFlat
-									key={tecla.nota}
-									numero={tecla.numero}
-									setSelected={setTeclas}
-									teclado={teclas}
-									selected={tecla.selected}
-								/>
-							)
-						}
-					})}
-			</div>
-			<div className="w-full h-5 flex flex-col items-center">
-				{aviso && <p>{aviso}</p>}
-				<button
-					className="bg-green-500 w-52 rounded-lg"
-					onClick={verificarAcorde}
-				>
-					Enviar
-				</button>
-			</div>
-		</section>
+													{
+														<Nota
+															absolute={true}
+															visible={visible}
+															nota={nota.nota}
+															numero={nota.numero}
+														/>
+													}
+												</li>
+											)
+										}
+										return (
+											<li
+												className="list-none h-6  grid place-items-center"
+												key={nota.numero}
+												id={nota.numero}
+											>
+												<div className="border-4 h-2 w-full border-black"></div>
+												<Nota
+													visible={visible}
+													nota={nota.nota}
+													numero={nota.numero}
+													absolute={true}
+												/>
+											</li>
+										)
+									}
+									if (nota.espacio === true) {
+										return (
+											<li
+												className="list-none h-6 grid place-items-center"
+												key={nota.numero}
+												id={nota.numero}
+											>
+												<Nota
+													visible={visible}
+													nota={nota.nota}
+													numero={nota.numero}
+												/>
+											</li>
+										)
+									}
+
+									if (nota.espacio === undefined) {
+										return (
+											<div
+												key={nota.numero}
+												className="flex justify-center gap-7"
+											>
+												<Nota
+													visible={visible}
+													nota={nota.nota}
+													numero={nota.numero}
+													absolute={true}
+													sustain={true}
+												/>
+											</div>
+										)
+									}
+							  })}
+						<img
+							className={` w-52 absolute ${
+								partitura === "SOL" ? "top-9" : "top-52"
+							}`}
+							src={partitura === "SOL" ? claveSol : claveFa}
+						/>
+					</div>
+
+					<Teclado teclas={teclas} setTeclas={setTeclas} />
+
+					<div className="w-full h-5 flex flex-col items-center">
+						{aviso && <p>{aviso}</p>}
+						<button
+							className="bg-green-500 w-52 rounded-lg"
+							onClick={verificarAcorde}
+						>
+							Enviar
+						</button>
+					</div>
+				</>
+			)}
+		</main>
 	)
 }

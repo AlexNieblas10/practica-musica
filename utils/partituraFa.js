@@ -1,4 +1,5 @@
-export const partituraFa = [
+export const partituraFa =
+[
 	{ nota: "F", espacio: true, numero: 19 },
 	{ nota: "E", espacio: false, numero: 18 },
 	{ nota: "D", espacio: true, numero: 17 },
@@ -18,4 +19,4 @@ export const partituraFa = [
 	{ nota: "D", espacio: true, numero: 3 },
 	{ nota: "C", espacio: false, numero: 2 },
 	{ nota: "B", espacio: true, numero: 1 },
-]
+] 
